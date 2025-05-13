@@ -5,7 +5,7 @@ import {
   EyeSlashIcon,
 } from "@heroicons/react/24/outline";
 
-type InputBoxProps = {
+type TextAreaProps = {
   name: string;
   placeholder: string;
   register: any;
@@ -15,9 +15,10 @@ type InputBoxProps = {
   value?: string;
   customStyle?: string;
   label?: string;
+  rows?: number;
 };
 
-function InputBox({
+function TextArea({
   name,
   placeholder,
   register,
@@ -26,7 +27,8 @@ function InputBox({
   disabled = false,
   customStyle = "",
   label,
-}: InputBoxProps) {
+  rows = 4,
+}: TextAreaProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -34,7 +36,7 @@ function InputBox({
   };
 
   return (
-    <div>
+    <>
       {label && (
         <label
           htmlFor={name}
@@ -44,11 +46,12 @@ function InputBox({
         </label>
       )}
       <div className="relative">
-        <input
+        <textarea
           {...register(name, type === "number" ? { valueAsNumber: true } : {})}
           type={type === "password" && showPassword ? "text" : type}
           name={name}
           id={name}
+          rows={rows}
           disabled={disabled}
           className={`text-sm placeholder:text-typography-dark/70 placeholder:text-sm appearance-none  ring-typography-secondary/30 block w-full rounded-[8px] py-2.5 pr-10 pl-3  text-gray-900 ring-1 ring-inset focus:ring-inset sm:text-base sm:leading-6 outline-none bg-light-background ${customStyle} ${
             error ? "focus:ring-red-500 ring-red-500" : ""
@@ -82,8 +85,8 @@ function InputBox({
         )}
       </div>
       {error && <p className="mt-1 text-sm text-red-600 text-left">{error}</p>}
-    </div>
+    </>
   );
 }
 
-export default InputBox;
+export default TextArea;

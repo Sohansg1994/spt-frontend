@@ -35,7 +35,6 @@ export default function SignIn() {
   });
   const onSubmit = (data: SignInFormData) => {
     mutation.mutate(data);
-    // Add your sign-in logic here
   };
 
   return (
@@ -44,18 +43,20 @@ export default function SignIn() {
         <h2 className="text-2xl font-bold text-center mb-6">Sign In</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <InputBox
-            id="email"
+            name="email"
+            placeholder="Enter your email"
             label="Email"
-            type="email"
-            register={register("email")}
-            error={errors.email}
+            type="text"
+            register={register}
+            error={errors.email?.message}
           />
           <InputBox
-            id="password"
+            name="password"
             label="Password"
+            placeholder="Enter your password"
             type="password"
-            register={register("password")}
-            error={errors.password}
+            register={register}
+            error={errors.password?.message}
           />
           <button
             type="submit"

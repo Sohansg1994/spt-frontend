@@ -3,9 +3,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { classNames } from "../../utils/classnames";
 
 /* -------------------------------------------------------------------------- */
-/*                                 Types                                      */
+/*                                 type                                       */
 /* -------------------------------------------------------------------------- */
-type Props = {
+type props = {
   label?: string;
   path: string;
   isOpen?: boolean;
@@ -14,27 +14,28 @@ type Props = {
   minWidth: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isMobile?: boolean;
-  isDisabled?: boolean; // Prop to handle disabled state
+  isDisabled?: boolean;
 };
 
-/* -------------------------------------------------------------------------- */
-/*                             SideNavHeader                                  */
-/* -------------------------------------------------------------------------- */
 export default function SideNavHeader({
-  label = "Default Label",
+  label,
   path,
-  isOpen = false,
-  icon = null,
+  isOpen,
+  icon,
+  minWidth,
+  maxWidth,
   setIsOpen,
   isMobile = false,
-  isDisabled = false, // Defaults to false
-}: Props) {
+  isDisabled = false,
+}: props) {
   const location = useLocation();
   const navigate = useNavigate();
-
   const locationArray = location.pathname.split("/");
   const pathArray = path.split("/");
-  const isActive = pathArray[0] === `${locationArray[1]}`;
+
+  const isActive =
+    pathArray[pathArray.length - 1] ===
+    `${locationArray[locationArray.length - 1]}`;
 
   const handleNavigate = () => {
     if (!isDisabled) {
@@ -43,39 +44,39 @@ export default function SideNavHeader({
     }
   };
 
-  const buttonClasses = classNames(
-    isDisabled
-      ? "cursor-not-allowed opacity-50"
-      : "hover:text-typography-light-primary ",
-    isActive
-      ? "text-typography-primary font-semibold ring-1 ring-light-primary rounded-md bg-light-primary/20"
-      : "text-typography-secondary-dark/50 font-semibold hover:bg-light-primary/20 hover:rounded-md ",
-    // isOpen ? (isMobile ? maxWidth : maxWidth) : isMobile ? "hidden" : minWidth,
-    isOpen ? `px-2.5 w-full ` : `px-2.5 `,
-    `group flex gap-x-4  py-1.5 text-sm leading-6 whitespace-nowrap overflow-hidden transition-all duration-500  `
-  );
-
-  const iconClasses = classNames(
-    isActive
-      ? "text-typography-primary"
-      : "text-typography-secondary-dark/50 group-hover:text-typography-light-primary ",
-    isOpen ? "" : "transition-all duration-500",
-    "h-5 w-5 shrink-0"
-  );
-
   return (
-    <ul>
-      <li className="mb-2 ">
-        <button
-          onClick={handleNavigate}
-          disabled={isDisabled} // Disable button if `isDisabled` is true
-          className={buttonClasses}
-          aria-label={label}
+    <li className="mb-1">
+      <button
+        onClick={handleNavigate}
+        disabled={isDisabled}
+        className={classNames(
+          isDisabled ? "cursor-not-allowed opacity-50" : "hover:bg-primary-200",
+          isActive
+            ? "text-typography-primary font-semibold "
+            : "text-typography-secondary ",
+          isOpen
+            ? isMobile
+              ? maxWidth
+              : maxWidth
+            : isMobile
+            ? "hidden"
+            : minWidth,
+          `group flex gap-x-4 py-2.5 sm:py-3 text-base leading-6 whitespace-nowrap overflow-hidden transition-all duration-300`
+        )}
+      >
+        <div
+          className={classNames(
+            isActive
+              ? "text-typography-primary "
+              : "text-typography-secondary ",
+            isOpen ? "ml-6" : "transition-all duration-500 ml-4",
+            "h-6 w-6 shrink-0"
+          )}
         >
-          <div className={iconClasses}>{icon}</div>
-          {isOpen && <div>{label}</div>}
-        </button>
-      </li>
-    </ul>
+          {icon}
+        </div>
+        {isOpen && <div>{label}</div>}
+      </button>
+    </li>
   );
 }

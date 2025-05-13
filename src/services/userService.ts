@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 export type SignUpData = {
   name: string;
   email: string;
@@ -9,7 +10,7 @@ export type SignInData = {
   password: string;
 };
 export async function signUpUser(data: SignUpData): Promise<any> {
-  const response = await fetch("http://localhost:3000/api/users", {
+  const response = await fetch("http://localhost:3000/api/user", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -25,7 +26,7 @@ export async function signUpUser(data: SignUpData): Promise<any> {
 }
 
 export async function signInUser(data: SignInData): Promise<any> {
-  const response = await fetch("http://localhost:3000/api/auth/login", {
+  const response = await fetch("http://localhost:3000/api/user/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -36,6 +37,33 @@ export async function signInUser(data: SignInData): Promise<any> {
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.message || "Failed to sign in");
+  }
+
+  const responseData = await response.json();
+
+  // Store the token in cookies
+  Cookies.set("access_token", responseData.token, {
+    secure: true,
+    sameSite: "strict",
+  });
+
+  return responseData;
+}
+
+export async function fetchCurrentUser() {
+  const token = Cookies.get("access_token");
+
+  if (!token) throw new Error("No access token found");
+
+  const response = await fetch("http://localhost:3000/api/user/me", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to fetch current user");
   }
 
   return response.json();
